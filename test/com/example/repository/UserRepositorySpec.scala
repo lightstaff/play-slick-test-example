@@ -1,25 +1,14 @@
 package com.example.repository
 
-import scala.concurrent.ExecutionContext
-
-import org.scalatest.BeforeAndAfterAll
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.time.{Millis, Seconds, Span}
-
 import com.example.core.Model.{Group, User}
 
-class UserRepositorySpec extends MySQLRepositorySpec with ScalaFutures with BeforeAndAfterAll {
+class UserRepositorySpec extends MySQLRepositorySpec {
 
   import profile.api._
 
-  implicit lazy val executor: ExecutionContext = fakeApplication().actorSystem.dispatcher
-
-  override implicit val patienceConfig: PatienceConfig =
-    PatienceConfig(timeout = Span(10, Seconds), interval = Span(1000, Millis))
-
   var existGroupId = 0
 
-  private val repository = fakeApplication().injector.instanceOf[UserRepository]
+  private val repository = fakeApplication.injector.instanceOf[UserRepository]
 
   override def beforeAll(): Unit = {
     existGroupId =
@@ -29,7 +18,8 @@ class UserRepositorySpec extends MySQLRepositorySpec with ScalaFutures with Befo
 
   override def afterAll(): Unit = {
     val _ = db.run(users.delete andThen groups.delete).futureValue
-    ()
+
+    super.afterAll()
   }
 
   "user repository" should {
