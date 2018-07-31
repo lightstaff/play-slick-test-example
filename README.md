@@ -1,0 +1,1 @@
+# Playframework + Slick Test Example
